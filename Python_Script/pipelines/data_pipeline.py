@@ -20,8 +20,8 @@ from config import get_data_paths, get_columns, get_missing_values_config, get_o
 
 
 def data_pipeline(
-                    data_path: str='data/raw/ChurnModelling.csv', 
-                    target_column: str='Exited', 
+                    data_path: str='data/raw/telco-customer-dataset.xls', 
+                    target_column: str='Churn', 
                     test_size: float=0.2, 
                     force_rebuild: bool=False
                     ) -> Dict[str, np.ndarray]:
@@ -58,70 +58,70 @@ def data_pipeline(
         df = ingestor.ingest(data_path)
         print(f"loaded data shape: {df.shape}")
 
-        print('\nStep 2: Handle Missing Values')
-        drop_handler = DropMissingValuesStrategy(critical_columns=columns['critical_columns'])
+    #     print('\nStep 2: Handle Missing Values')
+    #     drop_handler = DropMissingValuesStrategy(critical_columns=columns['critical_columns'])
 
-        age_handler = FillMissingValuesStrategy(                
-                                                method='mean',
-                                                relevant_column='Age'
-                                                )
+    #     age_handler = FillMissingValuesStrategy(                
+    #                                             method='mean',
+    #                                             relevant_column='Age'
+    #                                             )
         
-        gender_handler = FillMissingValuesStrategy(
-                                                relevant_column='Gender', 
-                                                is_custom_imputer=True,
-                                                custom_imputer=GenderImputer()
-                                                )
-        df = drop_handler.handle(df)
-        df = age_handler.handle(df)
-        df = gender_handler.handle(df) 
-        df.to_csv('temp_imputed.csv', index=False)
+    #     gender_handler = FillMissingValuesStrategy(
+    #                                             relevant_column='Gender', 
+    #                                             is_custom_imputer=True,
+    #                                             custom_imputer=GenderImputer()
+    #                                             )
+    #     df = drop_handler.handle(df)
+    #     df = age_handler.handle(df)
+    #     df = gender_handler.handle(df) 
+    #     df.to_csv('temp_imputed.csv', index=False)
 
-    df = pd.read_csv('temp_imputed.csv')
+    # df = pd.read_csv('temp_imputed.csv')
 
-    print(f"data shape after imputation: {df.shape}")
+    # print(f"data shape after imputation: {df.shape}")
 
-    print('\nStep 3: Handle Outliers')
+    # print('\nStep 3: Handle Outliers')
 
-    outlier_detector = OutlierDetector(strategy=IQROutlierDetection())
-    df = outlier_detector.handle_outliers(df, columns['outlier_columns'])
-    print(f"data shape after outlier removal: {df.shape}")
+    # outlier_detector = OutlierDetector(strategy=IQROutlierDetection())
+    # df = outlier_detector.handle_outliers(df, columns['outlier_columns'])
+    # print(f"data shape after outlier removal: {df.shape}")
 
-    print('\nStep 4: Feature Binning')
+    # print('\nStep 4: Feature Binning')
 
-    binning = CustomBinningStratergy(binning_config['credit_score_bins'])
-    df = binning.bin_feature(df, 'CreditScore')
-    print(f"data after feature binning: \n{df.head()}")
+    # binning = CustomBinningStratergy(binning_config['credit_score_bins'])
+    # df = binning.bin_feature(df, 'CreditScore')
+    # print(f"data after feature binning: \n{df.head()}")
 
-    print('\nStep 5: Feature Encoding')
+    # print('\nStep 5: Feature Encoding')
 
-    nominal_strategy = NominalEncodingStrategy(encoding_config['nominal_columns'])
-    ordinal_strategy = OrdinalEncodingStratergy(encoding_config['ordinal_mappings'])
+    # nominal_strategy = NominalEncodingStrategy(encoding_config['nominal_columns'])
+    # ordinal_strategy = OrdinalEncodingStratergy(encoding_config['ordinal_mappings'])
 
-    df = nominal_strategy.encode(df)
-    df = ordinal_strategy.encode(df)
-    print(f"data after feature encoding: \n{df.head()}")
+    # df = nominal_strategy.encode(df)
+    # df = ordinal_strategy.encode(df)
+    # print(f"data after feature encoding: \n{df.head()}")
 
-    print('\nStep 6: Feature Scaling')
-    minmax_strategy = MinMaxScalingStratergy()
-    df = minmax_strategy.scale(df, scaling_config['columns_to_scale'])
-    print(f"data after feature scaling: \n{df.head()}")
+    # print('\nStep 6: Feature Scaling')
+    # minmax_strategy = MinMaxScalingStratergy()
+    # df = minmax_strategy.scale(df, scaling_config['columns_to_scale'])
+    # print(f"data after feature scaling: \n{df.head()}")
 
-    print('\nStep 7: Post Processing')
-    df = df.drop(columns=['RowNumber', 'CustomerId', 'Firstname', 'Lastname'])
-    print(f"data after post processing: \n{df.head()}")
+    # print('\nStep 7: Post Processing')
+    # df = df.drop(columns=['RowNumber', 'CustomerId', 'Firstname', 'Lastname'])
+    # print(f"data after post processing: \n{df.head()}")
 
-    print('\nStep 8: Data Splitting')
-    splitting_stratergy = SimpleTrainTestSplitStratergy(test_size=splitting_config['test_size'])
-    X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Exited')
+    # print('\nStep 8: Data Splitting')
+    # splitting_stratergy = SimpleTrainTestSplitStratergy(test_size=splitting_config['test_size'])
+    # X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Exited')
 
-    X_train.to_csv(x_train_path, index=False)
-    X_test.to_csv(x_test_path, index=False)
-    Y_train.to_csv(y_train_path, index=False)
-    Y_test.to_csv(y_test_path, index=False)
+    # X_train.to_csv(x_train_path, index=False)
+    # X_test.to_csv(x_test_path, index=False)
+    # Y_train.to_csv(y_train_path, index=False)
+    # Y_test.to_csv(y_test_path, index=False)
 
-    print(f"X train size : {X_train.shape}")
-    print(f"X test size : {X_test.shape}")
-    print(f"Y train size : {Y_train.shape}")
-    print(f"Y test size : {Y_test.shape}")
+    # print(f"X train size : {X_train.shape}")
+    # print(f"X test size : {X_test.shape}")
+    # print(f"Y train size : {Y_train.shape}")
+    # print(f"Y test size : {Y_test.shape}")
 
 data_pipeline()

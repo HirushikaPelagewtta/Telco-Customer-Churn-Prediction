@@ -1,12 +1,12 @@
 data_paths:
-  raw_data: "data/raw/ChurnModelling.csv"
-  processed_data: "data/processed/ChurnModelling_Missing_Values_Handled.csv"
+  raw_data: "data/raw/telco-customer-dataset.xls"
+  processed_data: "processed/telco-customer-dataset_missing_values_handled.csv"
   artifacts_dir: "artifacts"
   data_artifacts_dir: "artifacts/data"
   model_artifacts_dir: "artifacts/models"
 
 columns:
-  target: "Exited"
+  target: "Churn"
   drop_columns: ["CustomerId", "RowNumber", "Surname"]
   critical_columns: ["Firstname"]
   outlier_columns: ["CreditScore", "Age", "NumOfProducts"]
