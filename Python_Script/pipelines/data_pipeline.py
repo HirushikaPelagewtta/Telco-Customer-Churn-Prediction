@@ -114,7 +114,7 @@ def data_pipeline(
 
     print('\nStep 8: Data Splitting')
     splitting_stratergy = SimpleTrainTestSplitStratergy(test_size=splitting_config['test_size'])
-    X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Exited')
+    X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Churn')
 
     X_train.to_csv(x_train_path, index=False)
     X_test.to_csv(x_test_path, index=False)
