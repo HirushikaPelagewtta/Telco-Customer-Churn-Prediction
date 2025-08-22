@@ -72,56 +72,9 @@ class ColumnHandler(MissingValueHandlingStrategy):
 
         return df
 
-class Gender(str, Enum):
-    MALE = 'Male'
-    FEMALE = 'Female'
 
-
-class GenderPrediction(BaseModel):
-    firstname: str
-    lastname: str
-    pred_gender: Gender
-
-class GenderImputer: 
-    def __init__(self):
-        self.groq_client = groq.Groq()
-
-    def _predict_gender(self, firstname, lastname):
-        prompt = f"""
-            What is the most likely gender (Male or Female) for someone with the first name '{firstname}'
-            and last name '{lastname}' ?
-
-            Your response only consists of one word: Male or Female
-            """
-        response = self.groq_client.chat.completions.create(
-                                                            model='llama-3.3-70b-versatile',
-                                                            messages=[{"role": "user", "content": prompt}],
-                                                            )
-        predicted_gender = response.choices[0].message.content.strip()
-        prediction = GenderPrediction(firstname=firstname, lastname=lastname, pred_gender=predicted_gender)
-        logging.info(f'Predicted gender for {firstname} {lastname}: {prediction}')
-        return prediction.pred_gender
-    
-    def impute(self, df):
-        missing_gender_index = df['Gender'].isnull()
-        for idx in df[missing_gender_index].index:
-            first_name = df.loc[idx, 'Firstname']
-            last_name = df.loc[idx, 'Lastname']
-            gender = self._predict_gender(first_name, last_name)
-            
-            if gender:
-                df.loc[idx, 'Gender'] = gender
-                print(f"{first_name} {last_name} : {gender}")
-            else:
-                print(f"{first_name} {last_name} : No Gender Detected")
-
-        return df
-    
 class FillMissingValuesStrategy(MissingValueHandlingStrategy):
-    """ 
-    Missing -> Mean (Age)
-            -> Custom (Gender)
-    """
+
     def __init__(
                 self, 
                 method='mean', 
@@ -144,10 +97,3 @@ class FillMissingValuesStrategy(MissingValueHandlingStrategy):
         return df
     
 
-"""
-23rd
-
--   Model & Prediction Pipelines
--   ZenML & MLflow
-
-"""

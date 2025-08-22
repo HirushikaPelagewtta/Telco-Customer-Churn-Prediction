@@ -33,16 +33,3 @@ class MinMaxScalingStratergy(FeatureScalingStrategy):
     def get_scaler(self):
         return self.scaler
     
-# class MinMaxScalingStrategy(FeatureScalingStrategy):
-#     def __init__(self):
-#         self.scalar = MinMaxScaler()
-#         self.fitted = False
-
-#     def scale(self, df, columns_to_scale):
-#         df[columns_to_scale] = self.scalar.fit_transform(df[columns_to_scale])
-#         self.fitted = True
-#         logging.info(f'Applied Min-Max scaling to columns: {columns_to_scale}')
-#         return df
-
-#     def get_scalar(self):
-#         return self.scalar
