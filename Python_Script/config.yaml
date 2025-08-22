@@ -64,7 +64,7 @@ feature_binning:
 feature_encoding:
   nominal_columns: ['gender', 'InternetService', 'Contract', 'PaymentMethod']
   ordinal_mappings:
-    CreditScoreBins:
+    tenureBins:
       New: 0
       Early: 1
       Established: 2
