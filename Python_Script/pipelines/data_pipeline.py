@@ -5,7 +5,7 @@ from typing import Dict
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from data_ingestion import DataIngestorCSV
-from handle_missing_values import DropMissingValuesStrategy, FillMissingValuesStrategy, ReplaceWithZero ,YesNoToBinary
+from handle_missing_values import  ReplaceWithZero ,YesNoToBinary, ColumnHandler
 from outlier_detection import OutlierDetector, IQROutlierDetection
 from feature_binning import CustomBinningStratergy
 from feature_encoding import OrdinalEncodingStratergy, NominalEncodingStrategy
@@ -65,6 +65,7 @@ def data_pipeline(
 
         yes_no_handler = YesNoToBinary(fill_columns = columns['fill_columns'], internet_columns = columns['internet_columns'], phone_columns = columns['phone_columns'])
 
+        column_handler = ColumnHandler(new_column = columns['new_column'], old_column = columns['old_column'] , redundent_columns = columns["redundent_columns"])
         # age_handler = FillMissingValuesStrategy(                
         #                                         method='mean',
         #                                         relevant_column='Age'
@@ -73,17 +74,19 @@ def data_pipeline(
         
         df = white_space_handler.handle(df)
         df = yes_no_handler.handle(df)
+        df = column_handler.handle(df)
+
         df.to_csv('temp_imputed.csv', index=False)
 
     df = pd.read_csv('temp_imputed.csv')
 
     print(f"data shape after imputation: {df.shape}")
 
-    # print('\nStep 3: Handle Outliers')
+    print('\nStep 3: Handle Outliers')
 
-    # outlier_detector = OutlierDetector(strategy=IQROutlierDetection())
-    # df = outlier_detector.handle_outliers(df, columns['outlier_columns'])
-    # print(f"data shape after outlier removal: {df.shape}")
+    outlier_detector = OutlierDetector(strategy=IQROutlierDetection())
+    df = outlier_detector.handle_outliers(df, columns['outlier_columns'])
+    print(f"data shape after outlier removal: {df.shape}")
 
     # print('\nStep 4: Feature Binning')
 

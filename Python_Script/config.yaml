@@ -7,11 +7,14 @@ data_paths:
 
 columns:
   target: "Churn"
+  new_column: "HasInternet"
+  old_column: "InternetService"
+  redundent_columns: ["customerID"]
   fill_columns: ["Partner", "Dependents", "PhoneService", "PaperlessBilling", "Churn"]
   internet_columns: ['OnlineSecurity', 'OnlineBackup', 'DeviceProtection','TechSupport', 'StreamingTV', 'StreamingMovies']
   phone_columns: ['MultipleLines']
   critical_columns: ["TotalCharges"]
-  outlier_columns: ["CreditScore", "Age", "NumOfProducts"]
+  outlier_columns: ['tenure', 'MonthlyCharges', 'TotalCharges']
   nominal_columns: ["Geography", "Gender"]
   numeric_columns: ["Balance", "EstimatedSalary"]
   feature_columns:

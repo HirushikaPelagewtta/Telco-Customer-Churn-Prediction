@@ -35,6 +35,7 @@ class ReplaceWithZero(MissingValueHandlingStrategy):
     def handle(self, df):
         for col in self.critical_columns:
             df[col] = df[col].replace(r'^\s*$', 0, regex=True)
+            df[col] = pd.to_numeric(df[col])
         
         return df
 
@@ -56,6 +57,22 @@ class YesNoToBinary(MissingValueHandlingStrategy):
         for col in self.phone_columns:
             df[col] = df[col].replace('No phone service', 'No')
             df[col] = df[col].apply(lambda x: 1 if x=="Yes" else 0)
+
+        return df
+
+
+class ColumnHandler(MissingValueHandlingStrategy):
+    def __init__(self, new_column = "", old_column ="", redundent_columns=[]) :
+        self.new_column = new_column
+        self.old_column = old_column
+        self.redundent_columns = redundent_columns
+        logging.info(f"Handling Columns")
+
+    def handle(self, df):
+        df[self.new_column] = (df[self.old_column] != "No").astype(int)
+        for col in self.redundent_columns:
+            df = df.drop(col , axis = 1)
+
 
         return df
 
