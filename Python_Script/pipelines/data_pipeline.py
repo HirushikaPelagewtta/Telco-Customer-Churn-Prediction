@@ -5,7 +5,7 @@ from typing import Dict
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from data_ingestion import DataIngestorCSV
-from handle_missing_values import DropMissingValuesStrategy, FillMissingValuesStrategy, GenderImputer
+from handle_missing_values import DropMissingValuesStrategy, FillMissingValuesStrategy, ReplaceWithZero ,YesNoToBinary
 from outlier_detection import OutlierDetector, IQROutlierDetection
 from feature_binning import CustomBinningStratergy
 from feature_encoding import OrdinalEncodingStratergy, NominalEncodingStrategy
@@ -58,27 +58,26 @@ def data_pipeline(
         df = ingestor.ingest(data_path)
         print(f"loaded data shape: {df.shape}")
 
-    #     print('\nStep 2: Handle Missing Values')
-    #     drop_handler = DropMissingValuesStrategy(critical_columns=columns['critical_columns'])
+        print('\nStep 2: Handle Missing Values')
+        # drop_handler = DropMissingValuesStrategy(critical_columns=columns['critical_columns'])
 
-    #     age_handler = FillMissingValuesStrategy(                
-    #                                             method='mean',
-    #                                             relevant_column='Age'
-    #                                             )
+        white_space_handler = ReplaceWithZero(critical_columns = columns['critical_columns'])
+
+        yes_no_handler = YesNoToBinary(fill_columns = columns['fill_columns'], internet_columns = columns['internet_columns'], phone_columns = columns['phone_columns'])
+
+        # age_handler = FillMissingValuesStrategy(                
+        #                                         method='mean',
+        #                                         relevant_column='Age'
+        #                                         )
         
-    #     gender_handler = FillMissingValuesStrategy(
-    #                                             relevant_column='Gender', 
-    #                                             is_custom_imputer=True,
-    #                                             custom_imputer=GenderImputer()
-    #                                             )
-    #     df = drop_handler.handle(df)
-    #     df = age_handler.handle(df)
-    #     df = gender_handler.handle(df) 
-    #     df.to_csv('temp_imputed.csv', index=False)
+        
+        df = white_space_handler.handle(df)
+        df = yes_no_handler.handle(df)
+        df.to_csv('temp_imputed.csv', index=False)
 
-    # df = pd.read_csv('temp_imputed.csv')
+    df = pd.read_csv('temp_imputed.csv')
 
-    # print(f"data shape after imputation: {df.shape}")
+    print(f"data shape after imputation: {df.shape}")
 
     # print('\nStep 3: Handle Outliers')
 

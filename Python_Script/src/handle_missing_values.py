@@ -27,6 +27,38 @@ class DropMissingValuesStrategy(MissingValueHandlingStrategy):
         logging.info(f"{n_dropped} has been dropped")
         return df_cleaned
 
+class ReplaceWithZero(MissingValueHandlingStrategy):
+    def __init__(self, critical_columns = []):
+        self.critical_columns = critical_columns
+        logging.info(f"Replacing White Spaces in critical columns: {self.critical_columns}")
+
+    def handle(self, df):
+        for col in self.critical_columns:
+            df[col] = df[col].replace(r'^\s*$', 0, regex=True)
+        
+        return df
+
+class YesNoToBinary(MissingValueHandlingStrategy):
+    def __init__(self, fill_columns = [], internet_columns = [], phone_columns = []):
+        self.fill_columns = fill_columns
+        self.internet_columns = internet_columns
+        self.phone_columns = phone_columns
+        logging.info(f"Replacing Yes, No in fill columns: {self.fill_columns}, Resolving {self.internet_columns} and {self.phone_columns}")
+
+    def handle(self, df):
+        for col in self.fill_columns:
+            df[col] = df[col].apply(lambda x: 1 if x=="Yes" else 0)
+
+        for col in self.internet_columns:
+            df[col] = df[col].replace('No internet service', 'No')
+            df[col] = df[col].apply(lambda x: 1 if x=="Yes" else 0)
+        
+        for col in self.phone_columns:
+            df[col] = df[col].replace('No phone service', 'No')
+            df[col] = df[col].apply(lambda x: 1 if x=="Yes" else 0)
+
+        return df
+
 class Gender(str, Enum):
     MALE = 'Male'
     FEMALE = 'Female'

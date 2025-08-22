@@ -7,8 +7,10 @@ data_paths:
 
 columns:
   target: "Churn"
-  drop_columns: ["CustomerId", "RowNumber", "Surname"]
-  critical_columns: ["Firstname"]
+  fill_columns: ["Partner", "Dependents", "PhoneService", "PaperlessBilling", "Churn"]
+  internet_columns: ['OnlineSecurity', 'OnlineBackup', 'DeviceProtection','TechSupport', 'StreamingTV', 'StreamingMovies']
+  phone_columns: ['MultipleLines']
+  critical_columns: ["TotalCharges"]
   outlier_columns: ["CreditScore", "Age", "NumOfProducts"]
   nominal_columns: ["Geography", "Gender"]
   numeric_columns: ["Balance", "EstimatedSalary"]
