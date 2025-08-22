@@ -9,7 +9,6 @@ columns:
   target: "Churn"
   new_column: "HasInternet"
   old_column: "InternetService"
-  redundent_columns: ["customerID"]
   fill_columns: ["Partner", "Dependents", "PhoneService", "PaperlessBilling", "Churn"]
   internet_columns: ['OnlineSecurity', 'OnlineBackup', 'DeviceProtection','TechSupport', 'StreamingTV', 'StreamingMovies']
   phone_columns: ['MultipleLines']
@@ -73,7 +72,7 @@ feature_encoding:
 
 feature_scaling:
   scaling_type: "minmax"
-  columns_to_scale: ["Balance", "EstimatedSalary"]
+  columns_to_scale: ['MonthlyCharges','TotalCharges']
 
 data_splitting:
   split_type: "simple"

@@ -65,7 +65,7 @@ def data_pipeline(
 
         yes_no_handler = YesNoToBinary(fill_columns = columns['fill_columns'], internet_columns = columns['internet_columns'], phone_columns = columns['phone_columns'])
 
-        column_handler = ColumnHandler(new_column = columns['new_column'], old_column = columns['old_column'] , redundent_columns = columns["redundent_columns"])
+        column_handler = ColumnHandler(new_column = columns['new_column'], old_column = columns['old_column'])
         # age_handler = FillMissingValuesStrategy(                
         #                                         method='mean',
         #                                         relevant_column='Age'
@@ -108,22 +108,22 @@ def data_pipeline(
     df = minmax_strategy.scale(df, scaling_config['columns_to_scale'])
     print(f"data after feature scaling: \n{df.head()}")
 
-    # print('\nStep 7: Post Processing')
-    # df = df.drop(columns=['RowNumber', 'CustomerId', 'Firstname', 'Lastname'])
-    # print(f"data after post processing: \n{df.head()}")
+    print('\nStep 7: Post Processing')
+    df = df.drop(columns=["customerID"])
+    print(f"data after post processing: \n{df.head()}")
 
-    # print('\nStep 8: Data Splitting')
-    # splitting_stratergy = SimpleTrainTestSplitStratergy(test_size=splitting_config['test_size'])
-    # X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Exited')
+    print('\nStep 8: Data Splitting')
+    splitting_stratergy = SimpleTrainTestSplitStratergy(test_size=splitting_config['test_size'])
+    X_train, X_test, Y_train, Y_test = splitting_stratergy.split_data(df, 'Exited')
 
-    # X_train.to_csv(x_train_path, index=False)
-    # X_test.to_csv(x_test_path, index=False)
-    # Y_train.to_csv(y_train_path, index=False)
-    # Y_test.to_csv(y_test_path, index=False)
+    X_train.to_csv(x_train_path, index=False)
+    X_test.to_csv(x_test_path, index=False)
+    Y_train.to_csv(y_train_path, index=False)
+    Y_test.to_csv(y_test_path, index=False)
 
-    # print(f"X train size : {X_train.shape}")
-    # print(f"X test size : {X_test.shape}")
-    # print(f"Y train size : {Y_train.shape}")
-    # print(f"Y test size : {Y_test.shape}")
+    print(f"X train size : {X_train.shape}")
+    print(f"X test size : {X_test.shape}")
+    print(f"Y train size : {Y_train.shape}")
+    print(f"Y test size : {Y_test.shape}")
 
 data_pipeline()

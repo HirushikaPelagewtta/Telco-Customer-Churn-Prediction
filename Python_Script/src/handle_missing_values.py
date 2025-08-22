@@ -62,17 +62,13 @@ class YesNoToBinary(MissingValueHandlingStrategy):
 
 
 class ColumnHandler(MissingValueHandlingStrategy):
-    def __init__(self, new_column = "", old_column ="", redundent_columns=[]) :
+    def __init__(self, new_column = "", old_column ="") :
         self.new_column = new_column
         self.old_column = old_column
-        self.redundent_columns = redundent_columns
         logging.info(f"Handling Columns")
 
     def handle(self, df):
         df[self.new_column] = (df[self.old_column] != "No").astype(int)
-        for col in self.redundent_columns:
-            df = df.drop(col , axis = 1)
-
 
         return df
 
