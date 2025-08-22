@@ -19,19 +19,13 @@ class CustomBinningStratergy(FeatureBinningStrategy):
 
     def bin_feature(self, df, column):
         def assign_bin(value):
-            if value == 850:
-                return "Excellent"
-            
             for bin_label, bin_range in self.bin_definitions.items():
                 if len(bin_range) == 2:
-                    if bin_range[0] <= value <= bin_range[1]:
+                    if bin_range[0] <= value < bin_range[1]:
                         return bin_label
                 elif len(bin_range) == 1:
                     if value >= bin_range[0]:
                         return bin_label 
-                
-            if value > 850:
-                return "Invalid"
             
             return "Invalid"
         

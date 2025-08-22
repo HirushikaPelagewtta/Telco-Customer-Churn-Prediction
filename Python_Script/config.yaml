@@ -29,18 +29,18 @@ columns:
     - "IsActiveMember"
     - "EstimatedSalary"
 
-missing_values:
-  strategy: "fill"
-  methods:
-    age:
-      strategy: "fill"
-      method: "mean"
-      relevant_column: "Age"
-    gender:
-      strategy: "fill"
-      method: "mode"
-      relevant_column: "Gender"
-      use_gender_imputer: true
+# missing_values:
+#   strategy: "fill"
+#   methods:
+#     age:
+#       strategy: "fill"
+#       method: "mean"
+#       relevant_column: "Age"
+#     gender:
+#       strategy: "fill"
+#       method: "mode"
+#       relevant_column: "Gender"
+#       use_gender_imputer: true
 
 outlier_detection:
   detection_method: "iqr"
@@ -48,28 +48,28 @@ outlier_detection:
   z_score_threshold: 3.0
 
 feature_binning:
-  credit_score_bins:
-    Poor: [300, 580]
-    Fair: [580, 670]
-    Good: [670, 740]
-    Very Good: [740, 800]
-    Excellent: [800, 850]
-  credit_score_mapping:
-    Poor: 0
-    Fair: 1
-    Good: 2
-    Very Good: 3
-    Excellent: 4
+  tenure_bins:
+    New: [0, 6]
+    Early: [6, 12]
+    Established: [12, 24]
+    Mature: [24, 48]
+    Loyal: [48]
+  tenure_mapping:
+    New: 0
+    Early: 1
+    Established: 2
+    Mature: 3
+    Loyal: 4
 
 feature_encoding:
-  nominal_columns: ["Geography", "Gender"]
+  nominal_columns: ['gender', 'InternetService', 'Contract', 'PaymentMethod']
   ordinal_mappings:
     CreditScoreBins:
-      Poor: 0
-      Fair: 1
-      Good: 2
-      Very Good: 3
-      Excellent: 4
+      New: 0
+      Early: 1
+      Established: 2
+      Mature: 3
+      Loyal: 4
 
 feature_scaling:
   scaling_type: "minmax"

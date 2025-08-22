@@ -88,20 +88,20 @@ def data_pipeline(
     df = outlier_detector.handle_outliers(df, columns['outlier_columns'])
     print(f"data shape after outlier removal: {df.shape}")
 
-    # print('\nStep 4: Feature Binning')
+    print('\nStep 4: Feature Binning')
 
-    # binning = CustomBinningStratergy(binning_config['credit_score_bins'])
-    # df = binning.bin_feature(df, 'CreditScore')
-    # print(f"data after feature binning: \n{df.head()}")
+    binning = CustomBinningStratergy(binning_config['tenure_bins'])
+    df = binning.bin_feature(df, 'tenure')
+    print(f"data after feature binning: \n{df.head()}")
 
-    # print('\nStep 5: Feature Encoding')
+    print('\nStep 5: Feature Encoding')
 
-    # nominal_strategy = NominalEncodingStrategy(encoding_config['nominal_columns'])
-    # ordinal_strategy = OrdinalEncodingStratergy(encoding_config['ordinal_mappings'])
+    nominal_strategy = NominalEncodingStrategy(encoding_config['nominal_columns'])
+    ordinal_strategy = OrdinalEncodingStratergy(encoding_config['ordinal_mappings'])
 
-    # df = nominal_strategy.encode(df)
-    # df = ordinal_strategy.encode(df)
-    # print(f"data after feature encoding: \n{df.head()}")
+    df = nominal_strategy.encode(df)
+    df = ordinal_strategy.encode(df)
+    print(f"data after feature encoding: \n{df.head()}")
 
     # print('\nStep 6: Feature Scaling')
     # minmax_strategy = MinMaxScalingStratergy()
