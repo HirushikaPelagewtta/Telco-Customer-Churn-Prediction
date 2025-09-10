@@ -94,11 +94,46 @@ TELCO-CUSTOMER-CHURN-PREDICTION
    .venv\Scripts\activate      # Windows
    ```
 
-3. Install dependencies:
+Perfect 👍 thanks for clarifying! That means we should mention **two separate requirements files** in the README:
+
+* One for running **Jupyter notebooks** in the `EDA/` folder.
+* Another for running the **Python scripts & pipelines** in the `Python_Script/` folder.
+
+Here’s the corrected part of the `README.md` (only the **Installation** section needs updating):
+
+---
+
+## ⚙️ Installation
+
+1. Clone the repository:
 
    ```bash
-   pip install -r EDA/requirments.txt
+   git clone https://github.com/yourusername/Telco-Customer-Churn-Prediction.git
+   cd Telco-Customer-Churn-Prediction
    ```
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate   # Linux/Mac
+   .venv\Scripts\activate      # Windows
+   ```
+
+3. Install dependencies:
+
+   * For **EDA notebooks**:
+
+     ```bash
+     pip install -r EDA/requirements.txt
+     ```
+
+   * For **Python scripts & pipelines**:
+
+     ```bash
+     pip install -r Python_Script/requirements.txt
+     ```
+
 
 ---
 
