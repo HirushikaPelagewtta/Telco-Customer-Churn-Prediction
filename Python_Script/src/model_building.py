@@ -47,7 +47,7 @@ class RandomForestModelBuilder(BaseModelBuilder):
         self.model = RandomForestClassifier(**self.model_params)
         return self.model
     
-class XGboostModelBuilder(BaseModelBuilder):
+class XGBoostModelBuilder(BaseModelBuilder):
     def __init__(self, **kwargs):
         default_params = {
                         'max_depth': 10,
