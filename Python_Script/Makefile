@@ -1,13 +1,14 @@
 .PHONY: all clean install train-pipeline data-pipeline streaming-inference run-all help
 
-# Default Python interpreter
-PYTHON = python
-VENV = .venv/bin/activate
+# Let Make keep using cmd.exe (default)
+# No ACTIVATE needed
+PYTHON := .\.venv\Scripts\python.exe
+PIP := .\.venv\Scripts\pip.exe
+MLFLOW_PORT := 5001
 
-# Default target
+
 all: help
 
-# Help target
 help:
 	@echo "Available targets:"
 	@echo "  make install             - Install project dependencies and set up environment"
@@ -17,58 +18,50 @@ help:
 	@echo "  make run-all             - Run all pipelines in sequence"
 	@echo "  make clean               - Clean up artifacts"
 
-# Install project dependencies and set up environment
 install:
-	@echo "Installing project dependencies and setting up environment..."
 	@echo "Creating virtual environment..."
-	@python3 -m venv .venv
-	@echo "Activating virtual environment and installing dependencies..."
-	@source .venv/bin/activate && pip install --upgrade pip
-	@source .venv/bin/activate && pip install -r requirements.txt
-	@echo "Installation completed successfully!"
-	@echo "To activate the virtual environment, run: source .venv/bin/activate"
+	python -m venv .venv
+	@echo "Upgrading pip and installing requirements..."
+	$(PYTHON) -m pip install --upgrade pip
+	$(PIP) install -r requirements.txt
+	@echo "Installation completed!"
+	@echo "To activate manually in PowerShell: . .\\.venv\\Scripts\\Activate.ps1"
 
-# Clean up
 clean:
 	@echo "Cleaning up artifacts..."
-	rm -rf artifacts/models/*
-	rm -rf artifacts/evaluation/*
-	rm -rf artifacts/predictions/*
-	rm -rf data/processed/*
+	if exist "artifacts\\models"       del /q /s "artifacts\\models\\*"
+	if exist "artifacts\\evaluation"   del /q /s "artifacts\\evaluation\\*"
+	if exist "artifacts\\predictions"  del /q /s "artifacts\\predictions\\*"
+	if exist "data\\processed"         del /q /s "data\\processed\\*"
 	@echo "Cleanup completed!"
 
-
-
-# Run data pipeline
 data-pipeline:
 	@echo "Running data pipeline..."
-	@source $(VENV) && $(PYTHON) pipelines/data_pipeline.py
+	$(PYTHON) pipelines\\data_pipeline.py
 
-# Run training pipeline
 train-pipeline:
 	@echo "Running training pipeline..."
-	@source $(VENV) && $(PYTHON) pipelines/training_pipeline.py
+	$(PYTHON) pipelines\\training_pipeline.py
 
-# Run streaming inference pipeline with sample JSON
 streaming-inference:
 	@echo "Running streaming inference pipeline with sample JSON..."
-	@source $(VENV) && $(PYTHON) pipelines/streaming_inference_pipeline.py
+	$(PYTHON) pipelines\\streaming_inference_pipeline.py
 
-# Run all pipelines in sequence
 run-all:
 	@echo "Running all pipelines in sequence..."
-	@echo "========================================"
-	@echo "Step 1: Running data pipeline"
-	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/data_pipeline.py
-	@echo "\n========================================"
-	@echo "Step 2: Running training pipeline"
-	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/training_pipeline.py
-	@echo "\n========================================"
-	@echo "Step 3: Running streaming inference pipeline"
-	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/streaming_inference_pipeline.py
-	@echo "\n========================================"
+	$(PYTHON) pipelines\\data_pipeline.py
+	$(PYTHON) pipelines\\training_pipeline.py
+	$(PYTHON) pipelines\\streaming_inference_pipeline.py
 	@echo "All pipelines completed successfully!"
-	@echo "========================================"
+
+
+mlflow-ui:
+	@echo "Launching MLflow UI..."
+	@echo "MLflow UI will be available at: http://localhost:$(MLFLOW_PORT)"
+	@powershell -NoProfile -Command Start-Process "http://localhost:$(MLFLOW_PORT)"
+	$(PYTHON) -m mlflow ui --host 127.0.0.1 --port $(MLFLOW_PORT) 2>&1
+
+stop-mlflow:
+	@echo "Stopping all MLflow servers..."
+	-@for /f "tokens=5" %%P in ('netstat -ano ^| findstr LISTENING ^| findstr :$(MLFLOW_PORT)') do @echo Killing PID %%P & taskkill /PID %%P /F >nul 2>nul
+	@echo "✅ All MLflow servers have been stopped"
