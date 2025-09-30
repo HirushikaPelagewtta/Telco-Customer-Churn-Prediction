@@ -185,6 +185,7 @@ cython_debug/
 
 # Artifacts and outputs
 artifacts/
+**/artifacts/
 models/
 logs/
 outputs/
