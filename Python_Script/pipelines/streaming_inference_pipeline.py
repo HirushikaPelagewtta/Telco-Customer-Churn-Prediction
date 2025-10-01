@@ -4,9 +4,9 @@ import json
 import pandas as pd
 import logging
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-from src.model_inference import ModelInference
+from model_inference import ModelInference
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
-from utils.config import get_model_config, get_inference_config
+from config import get_model_config, get_inference_config
 logging.basicConfig(level=logging.INFO, format=
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -20,21 +20,27 @@ def streaming_inference(inference, data):
     return pred
 
 if __name__ == "__main__":
-    data =     {
-        "RowNumber": 1,
-        "CustomerId": 15634602,
-        "Firstname": "Grace",
-        "Lastname": "Williams",
-        "CreditScore": 619,
-        "Geography": "France",
-        "Gender": "Female",
-        "Age": 42,
-        "Tenure": 2,
-        "Balance": 0,
-        "NumOfProducts": 1,
-        "HasCrCard": 1,
-        "IsActiveMember": 1,
-        "EstimatedSalary": 101348.88,
+    data =    {
+        "customerID": "7590-VHVEG",
+        "gender": "Female",
+        "SeniorCitizen": 0,
+        "Partner": "Yes",
+        "Dependents": "No",
+        "tenure": 1,
+        "PhoneService": "No",
+        "MultipleLines": "No phone service",
+        "InternetService": "DSL",
+        "OnlineSecurity": "No",
+        "OnlineBackup": "Yes",
+        "DeviceProtection": "No",
+        "TechSupport": "No",
+        "StreamingTV": "No",
+        "StreamingMovies": "No",
+        "Contract": "Month-to-month",
+        "PaperlessBilling": "Yes",
+        "PaymentMethod": "Electronic check",
+        "MonthlyCharges": 29.85,
+        "TotalCharges": 29.85,
     }
     pred = streaming_inference(inference, data)
     print(pred)

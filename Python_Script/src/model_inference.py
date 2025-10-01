@@ -43,14 +43,32 @@ class ModelInference:
         for col, encoder in self.encoders.items():
             data[col] =  data[col].map(encoder)
 
-        binning = CustomBinningStratergy(self.binning_config['credit_score_bins'])
-        data = binning.bin_feature(data, 'CreditScore')
+        binning = CustomBinningStratergy(self.binning_config['tenure_bins'])
+        data = binning.bin_feature(data, 'tenure')
 
         ordinal_strategy = OrdinalEncodingStratergy(self.encoding_config['ordinal_mappings'])
         data = ordinal_strategy.encode(data)    
 
-        data = data.drop(columns=['RowNumber', 'CustomerId', 'Firstname', 'Lastname'])
+        data["HasInternet"] = np.where(data["InternetService"] != "No", 1, 0)
+
+
+        data = data.drop(columns=['customerID'])
+
+        for col in data.select_dtypes(include="object").columns:
+            # Option 1: Convert to category → codes (safer if you know unseen values won’t appear)
+            data[col] = data[col].astype("category").cat.codes
+
+            # Or Option 2 (if you expect only encoded numeric values by now):
+            # raise ValueError(f"Unexpected object column {col} found in inference data")
+
+            # Also make sure all columns are numeric
+            data = data.apply(pd.to_numeric, errors="coerce")
+
+        expected_features = self.model.get_booster().feature_names
+        data = data[expected_features]
+
         return data
+    
 
     def predict(self, data):
         pp_data = self.preprocess_input(data)

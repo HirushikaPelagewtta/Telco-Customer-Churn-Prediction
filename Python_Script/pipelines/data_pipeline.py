@@ -13,6 +13,7 @@ from feature_scaling import MinMaxScalingStratergy
 from data_spiltter import SimpleTrainTestSplitStratergy
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from config import get_data_paths, get_columns, get_missing_values_config, get_outlier_config, get_binning_config, get_encoding_config, get_scaling_config, get_splitting_config
+from mlflow_utils import MLflowTracker, setup_mlflow_autolog, create_mlflow_run_tags
 
 # How to Run
 # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
@@ -34,6 +35,14 @@ def data_pipeline(
     scaling_config = get_scaling_config()
     splitting_config = get_splitting_config()
     
+    mlflow_tracker = MLflowTracker()
+    setup_mlflow_autolog()
+    run_tags = create_mlflow_run_tags('data_pipeline',{
+                                        'data_source': data_path
+                                        }
+                                      )
+    run = mlflow_tracker.start_run(run_name='data_pipeline', tags = run_tags)
+
 
     print('Step 1: Data Ingestion')
     artifacts_dir = os.path.join(os.path.dirname(__file__), '..', data_paths['data_artifacts_dir'])
@@ -51,6 +60,19 @@ def data_pipeline(
         X_test =pd.read_csv(x_test_path)
         Y_train =pd.read_csv(y_train_path)
         Y_test =pd.read_csv(y_test_path)
+
+        mlflow_tracker.log_data_pipeline_metrics({
+            'total_samples': len(X_train) +len(X_test),
+            'train_samples': len(X_train),
+            'test_samples': len(X_test),
+            'x_train_path': x_train_path,
+            'x_test_path': x_test_path,
+            'y_train_path': y_train_path,
+            'y_test_path': y_test_path,
+        })
+
+        mlflow_tracker.end_run()
+
 
     os.makedirs(data_paths['data_artifacts_dir'], exist_ok=True)
     if not os.path.exists('temp_imputed.csv'):
